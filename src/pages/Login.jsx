@@ -12,16 +12,21 @@ export default function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(false);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       setError('');
+      setLoading(true);
       await login(email, password);
       toast.success('Successfully logged in!');
       navigate('/dashboard');
     } catch (err) {
       setError(err);
       toast.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -95,10 +100,11 @@ export default function Login() {
 
             <button 
               type="submit"
-              className="w-full py-3 bg-brand-500 hover:bg-brand-400 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-all hover:gap-3 shadow-lg shadow-brand-500/20"
+              disabled={loading}
+              className="w-full py-3 bg-brand-500 hover:bg-brand-400 text-white rounded-xl font-medium flex items-center justify-center gap-2 transition-all hover:gap-3 shadow-lg shadow-brand-500/20 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Sign In to Dashboard
-              <ArrowRight className="w-5 h-5" />
+              {loading ? 'Connecting...' : 'Sign In to Dashboard'}
+              {!loading && <ArrowRight className="w-5 h-5" />}
             </button>
           </form>
 

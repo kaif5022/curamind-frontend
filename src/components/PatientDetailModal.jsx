@@ -1,6 +1,12 @@
-import { X, Activity } from 'lucide-react';
+import { useState } from 'react';
+import { X, Activity, FileText } from 'lucide-react';
+import PrescriptionGenerator from './PrescriptionGenerator';
+import axios from '../utils/axiosConfig';
 
 export default function PatientDetailModal({ patient, onClose }) {
+  const [showPrescription, setShowPrescription] = useState(false);
+  const getImgUrl = (path) => path.startsWith('http') ? path : `${axios.defaults.baseURL.replace('/api', '')}${path}`;
+
   if (!patient) return null;
 
   return (
@@ -13,9 +19,17 @@ export default function PatientDetailModal({ patient, onClose }) {
             </div>
             <h2 className="text-xl font-bold text-white">Patient Record Details</h2>
           </div>
-          <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setShowPrescription(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-400 text-white rounded-lg transition-colors shadow-lg shadow-brand-500/20 text-sm font-medium"
+            >
+              <FileText className="w-4 h-4" /> Generate Prescription
+            </button>
+            <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         <div className="p-6 space-y-8">
@@ -81,7 +95,7 @@ export default function PatientDetailModal({ patient, onClose }) {
                 <h4 className="text-lg font-bold text-white mb-4">Patient Photos</h4>
                 <div className="flex gap-4 overflow-x-auto pb-4">
                   {patient.photos.map((photo, i) => (
-                    <img key={i} src={`http://127.0.0.1:5000${photo}`} alt="Patient Photo" className="h-48 w-48 object-cover rounded-xl border border-slate-600 shadow-lg" />
+                    <img key={i} src={getImgUrl(photo)} alt="Patient Photo" className="h-48 w-48 object-cover rounded-xl border border-slate-600 shadow-lg" />
                   ))}
                 </div>
               </div>
@@ -93,8 +107,8 @@ export default function PatientDetailModal({ patient, onClose }) {
                 <h4 className="text-lg font-bold text-white mb-4">Doctor Slips / Notes Images</h4>
                 <div className="flex gap-4 overflow-x-auto pb-4">
                   {patient.slips.map((slip, i) => (
-                    <a key={i} href={`http://127.0.0.1:5000${slip}`} target="_blank" rel="noreferrer">
-                      <img src={`http://127.0.0.1:5000${slip}`} alt="Medical Slip" className="h-64 w-48 object-cover rounded-xl border border-slate-600 shadow-lg hover:opacity-80 transition-opacity" />
+                    <a key={i} href={getImgUrl(slip)} target="_blank" rel="noreferrer">
+                      <img src={getImgUrl(slip)} alt="Medical Slip" className="h-64 w-48 object-cover rounded-xl border border-slate-600 shadow-lg hover:opacity-80 transition-opacity" />
                     </a>
                   ))}
                 </div>
@@ -104,6 +118,13 @@ export default function PatientDetailModal({ patient, onClose }) {
           
         </div>
       </div>
+
+      {showPrescription && (
+        <PrescriptionGenerator 
+          patient={patient} 
+          onClose={() => setShowPrescription(false)} 
+        />
+      )}
     </div>
   );
 }

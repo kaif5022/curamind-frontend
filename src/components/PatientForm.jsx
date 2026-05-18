@@ -47,7 +47,7 @@ export default function PatientForm({ isOpen, onClose, fetchPatients, patientToE
         doctorNotes: patientToEdit.doctorNotes || ''
       });
       if (patientToEdit.slips) {
-        setSlipPreviews(patientToEdit.slips.map(s => `http://127.0.0.1:5000${s}`));
+        setSlipPreviews(patientToEdit.slips.map(s => s.startsWith('http') ? s : `${axios.defaults.baseURL.replace('/api', '')}${s}`));
       }
     } else {
       setFormData({
