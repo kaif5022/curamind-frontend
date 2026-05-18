@@ -8,6 +8,7 @@ import Patients from './pages/Patients';
 import Prescriptions from './pages/Prescriptions';
 import Appointments from './pages/Appointments';
 import AIAssistant from './pages/AIAssistant';
+import AIPrescription from './pages/AIPrescription';
 import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import { AuthProvider } from './context/AuthContext';
@@ -28,6 +29,7 @@ function App() {
             <Route path="prescriptions" element={<Prescriptions />} />
             <Route path="appointments" element={<Appointments />} />
             <Route path="ai" element={<AIAssistant />} />
+            <Route path="ai-prescription" element={<AIPrescription />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="settings" element={<Settings />} />
           </Route>
