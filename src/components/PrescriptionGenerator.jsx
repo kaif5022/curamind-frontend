@@ -1,10 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { X, Printer, Download, FileText } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
+import axios from '../utils/axiosConfig';
 
 export default function PrescriptionGenerator({ patient, onClose }) {
   const printRef = useRef(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const getImgUrl = (path) => path.startsWith('http') ? path : `${axios.defaults.baseURL.replace('/api', '')}${path}`;
 
   if (!patient) return null;
 
@@ -13,10 +16,15 @@ export default function PrescriptionGenerator({ patient, onClose }) {
     if (!element) return;
     
     try {
+      setIsGenerating(true);
+      // Give DOM time to update state if needed, and images to stabilize
+      await new Promise(resolve => setTimeout(resolve, 500)); 
+
       const canvas = await html2canvas(element, { 
         scale: 2,
         useCORS: true,
-        logging: false
+        allowTaint: true,
+        logging: true
       });
       const data = canvas.toDataURL('image/png');
 
@@ -28,6 +36,8 @@ export default function PrescriptionGenerator({ patient, onClose }) {
       pdf.save(`Prescription_${patient.fullName.replace(/\s+/g, '_')}_${patient.slipNumber || 'doc'}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -51,8 +61,8 @@ export default function PrescriptionGenerator({ patient, onClose }) {
             <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg transition-colors">
               <Printer className="w-4 h-4" /> Print
             </button>
-            <button onClick={handleDownloadPdf} className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-400 text-white rounded-lg transition-colors shadow-lg shadow-brand-500/20">
-              <Download className="w-4 h-4" /> Download PDF
+            <button disabled={isGenerating} onClick={handleDownloadPdf} className="flex items-center gap-2 px-4 py-2 bg-brand-500 hover:bg-brand-400 text-white rounded-lg transition-colors shadow-lg shadow-brand-500/20 disabled:opacity-50">
+              <Download className="w-4 h-4" /> {isGenerating ? 'Generating...' : 'Download PDF'}
             </button>
             <div className="w-px h-8 bg-slate-700 mx-1 hidden sm:block"></div>
             <button onClick={onClose} className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
@@ -114,6 +124,19 @@ export default function PrescriptionGenerator({ patient, onClose }) {
                 </p>
               </div>
             </div>
+            
+            {/* Display Patient Photo if available */}
+            {patient.photos && patient.photos.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-slate-200">
+                <p className="font-semibold text-slate-600 text-xs uppercase tracking-wider mb-2">Patient Photo</p>
+                <img 
+                  src={getImgUrl(patient.photos[0])} 
+                  alt="Patient" 
+                  crossOrigin="anonymous"
+                  className="h-24 w-24 object-cover rounded border border-slate-300"
+                />
+              </div>
+            )}
           </div>
 
           {/* Rx Symbol */}
@@ -148,6 +171,24 @@ export default function PrescriptionGenerator({ patient, onClose }) {
               <div>
                 <h3 className="font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3 uppercase text-sm tracking-wider">Advice / Special Instructions</h3>
                 <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{patient.doctorNotes}</p>
+              </div>
+            )}
+
+            {/* Display Prescription Slips if available */}
+            {patient.slips && patient.slips.length > 0 && (
+              <div className="pt-4 page-break-inside-avoid">
+                <h3 className="font-bold text-slate-800 border-b border-slate-200 pb-2 mb-3 uppercase text-sm tracking-wider">Attached Clinical Documents</h3>
+                <div className="flex gap-4 flex-wrap">
+                  {patient.slips.map((slip, i) => (
+                    <img 
+                      key={i}
+                      src={getImgUrl(slip)} 
+                      alt={`Document ${i+1}`} 
+                      crossOrigin="anonymous"
+                      className="h-48 w-auto object-contain rounded border border-slate-300"
+                    />
+                  ))}
+                </div>
               </div>
             )}
           </div>
