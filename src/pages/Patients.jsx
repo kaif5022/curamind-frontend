@@ -4,6 +4,7 @@ import axios from '../utils/axiosConfig';
 import PatientForm from '../components/PatientForm';
 import PatientDetailModal from '../components/PatientDetailModal';
 import toast from 'react-hot-toast';
+import { getImgUrl } from '../utils/getImgUrl';
 
 export default function Patients() {
   const [patients, setPatients] = useState([]);
@@ -125,9 +126,9 @@ export default function Patients() {
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-dark-800 border border-slate-700 overflow-hidden flex items-center justify-center shrink-0">
                           {patient.photos && patient.photos.length > 0 ? (
-                            <img src={patient.photos[0].startsWith('http') ? patient.photos[0] : `${axios.defaults.baseURL.replace('/api', '')}${patient.photos[0]}`} alt={patient.fullName} className="w-full h-full object-cover" />
+                            <img src={getImgUrl(patient.photos[0])} alt={patient.fullName} className="w-full h-full object-cover" />
                           ) : patient.slips && patient.slips.length > 0 ? (
-                            <img src={patient.slips[0].startsWith('http') ? patient.slips[0] : `${axios.defaults.baseURL.replace('/api', '')}${patient.slips[0]}`} alt={patient.fullName} className="w-full h-full object-cover" />
+                            <img src={getImgUrl(patient.slips[0])} alt={patient.fullName} className="w-full h-full object-cover" />
                           ) : (
                             <User className="w-5 h-5 text-slate-500" />
                           )}

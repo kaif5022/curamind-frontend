@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { X, Activity, FileText } from 'lucide-react';
 import PrescriptionGenerator from './PrescriptionGenerator';
 import axios from '../utils/axiosConfig';
+import { getImgUrl } from '../utils/getImgUrl';
 
 export default function PatientDetailModal({ patient, onClose }) {
   const [showPrescription, setShowPrescription] = useState(false);
-  const getImgUrl = (path) => path.startsWith('http') ? path : `${axios.defaults.baseURL.replace('/api', '')}${path}`;
 
   if (!patient) return null;
 

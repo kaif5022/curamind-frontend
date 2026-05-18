@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Upload, Activity } from 'lucide-react';
 import axios from '../utils/axiosConfig';
 import toast from 'react-hot-toast';
+import { getImgUrl } from '../utils/getImgUrl';
 
 export default function PatientForm({ isOpen, onClose, fetchPatients, patientToEdit }) {
   const [formData, setFormData] = useState({
@@ -47,7 +48,7 @@ export default function PatientForm({ isOpen, onClose, fetchPatients, patientToE
         doctorNotes: patientToEdit.doctorNotes || ''
       });
       if (patientToEdit.slips) {
-        setSlipPreviews(patientToEdit.slips.map(s => s.startsWith('http') ? s : `${axios.defaults.baseURL.replace('/api', '')}${s}`));
+        setSlipPreviews(patientToEdit.slips.map(s => getImgUrl(s)));
       }
     } else {
       setFormData({
