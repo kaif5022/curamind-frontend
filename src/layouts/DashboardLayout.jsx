@@ -19,7 +19,7 @@ import {
 const sidebarItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
   { icon: Users, label: 'Patients', path: '/dashboard/patients' },
-  { icon: FileText, label: 'Prescriptions', path: '/dashboard/prescriptions' },
+  { icon: FileText, label: 'AI Prescription', path: '/dashboard/ai-prescription' },
   { icon: Calendar, label: 'Appointments', path: '/dashboard/appointments' },
   { icon: Bot, label: 'AI Assistant', path: '/dashboard/ai' },
   { icon: BarChart, label: 'Analytics', path: '/dashboard/analytics' },

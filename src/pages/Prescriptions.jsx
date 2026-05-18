@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function Prescriptions() {
   return (
     <div className="space-y-6">
@@ -12,10 +14,10 @@ export default function Prescriptions() {
           </svg>
         </div>
         <h3 className="text-lg font-medium text-white mb-2">No prescriptions yet</h3>
-        <p className="text-slate-400 mb-6 max-w-sm">You haven't generated any prescriptions today. Select a patient to start generating an AI-assisted prescription.</p>
-        <button className="px-6 py-2.5 bg-brand-500 hover:bg-brand-400 text-white rounded-xl font-medium transition-colors shadow-lg shadow-brand-500/20">
-          Create New Prescription
-        </button>
+        <p className="text-slate-400 mb-6 max-w-sm">You haven't generated any prescriptions today. Click below to start generating an AI-assisted prescription.</p>
+        <Link to="/dashboard/ai-prescription" className="px-6 py-2.5 bg-brand-500 hover:bg-brand-400 text-white rounded-xl font-medium transition-colors shadow-lg shadow-brand-500/20">
+          Create AI Prescription
+        </Link>
       </div>
     </div>
   );
